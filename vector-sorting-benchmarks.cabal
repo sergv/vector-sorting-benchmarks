@@ -57,28 +57,14 @@ common ghc-options
     ghc-options:
       -Wno-missing-kind-signatures
 
-executable vector-sorting-benchmarks
+library
   import: ghc-options
-  main-is:
-    bench/VectorSorting.hs
+  exposed-modules:
+    ForeignSorting
   hs-source-dirs:
-    .
+    src
   build-depends:
     , base >= 4.9
-    , deepseq
-    , primitive
-    , random
-    , tasty
-    , tasty-bench
-    , tasty-quickcheck
-    , text
-    , vector
-    , vector-algorithms
-  ghc-options:
-    -rtsopts
---     -threaded
---     "-with-rts-opts=-N -A32M"
-    -main-is VectorSorting
 
   include-dirs:
     cbits
@@ -91,4 +77,29 @@ executable vector-sorting-benchmarks
   --   build-depends: system-cxx-std-lib == 1.0
   if os(linux)
     extra-libraries: stdc++
+
+executable vector-sorting-benchmarks
+  import: ghc-options
+  main-is:
+    bench/VectorSorting.hs
+  hs-source-dirs:
+    .
+  build-depends:
+    , base >= 4.9
+    , deepseq
+    , mtl
+    , primitive
+    , random
+    , tasty
+    , tasty-bench
+    , tasty-quickcheck
+    , text
+    , vector
+    , vector-algorithms
+    , vector-sorting-benchmarks
+  ghc-options:
+    -rtsopts
+--     -threaded
+--     "-with-rts-opts=-N -A32M"
+    -main-is VectorSorting
 
