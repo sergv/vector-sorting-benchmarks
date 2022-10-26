@@ -2048,12 +2048,13 @@ xsInteresting :: U.Vector Int
 xsInteresting = U.concat $ replicate 16 $ U.fromList [4, 9, 7, 0, 0, 1, 2, 2, 8, 7, 4, 5, 5, 1, 9, 9]
 
 newtype SortFunc = SortFunc { unSortFunc :: forall s. UM.MVector s Int -> ST s () }
+newtype SortFuncStat = SortFuncStat { unSortFuncStat :: UM.MVector RealWorld Int64 -> StatM () }
 
 main :: IO ()
 main = do
   let generate n g = U.fromList <$> replicateM n (uniformRM (1 :: Int, 128) g)
 
-  str <- T.readFile "/home/sergey/projects/emacs/projects/emacs-native/candidates.txt"
+  str <- T.readFile "./candidates.txt"
 
   let fi64 :: Integral a => a -> Int64
       fi64 = fromIntegral
