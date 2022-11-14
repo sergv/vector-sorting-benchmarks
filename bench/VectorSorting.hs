@@ -65,6 +65,7 @@ import Data.Vector.Storable qualified as S
 import Data.Vector.Storable.Mutable qualified as SM
 import Data.Vector.Unboxed qualified as U
 import Data.Vector.Unboxed.Mutable qualified as UM
+import Foreign.C.Types
 import System.Environment
 import System.Random.Stateful
 
@@ -1886,14 +1887,14 @@ insertionUnboxedInt64 xs = do
 cppUnboxedInt64 :: S.Vector Int64 -> IO (SM.MVector RealWorld Int64)
 cppUnboxedInt64 xs = do
   ys <- S.thaw xs
-  SM.unsafeWith ys $ \ptr -> cppSortInt64 ptr (SM.length ys)
+  SM.unsafeWith ys $ \ptr -> cppSortInt64 ptr (CInt (fromIntegral (SM.length ys)))
   pure ys
 
 {-# NOINLINE cQuicksortUnboxedInt64 #-}
 cQuicksortUnboxedInt64 :: S.Vector Int64 -> IO (SM.MVector RealWorld Int64)
 cQuicksortUnboxedInt64 xs = do
   ys <- S.thaw xs
-  SM.unsafeWith ys $ \ptr -> cQuicksortInt64 ptr (SM.length ys)
+  SM.unsafeWith ys $ \ptr -> cQuicksortInt64 ptr (CInt (fromIntegral (SM.length ys)))
   pure ys
 
 
@@ -1901,7 +1902,7 @@ cQuicksortUnboxedInt64 xs = do
 cHeapsortUnboxed :: S.Vector Int64 -> IO (SM.MVector RealWorld Int64)
 cHeapsortUnboxed xs = do
   ys <- S.thaw xs
-  SM.unsafeWith ys $ \ptr -> cHeapsortInt64 ptr (SM.length ys)
+  SM.unsafeWith ys $ \ptr -> cHeapsortInt64 ptr (CInt (fromIntegral (SM.length ys)))
   pure ys
 
 
@@ -1910,7 +1911,7 @@ cHeapsortUnboxed xs = do
 cTimsortUnboxed :: S.Vector Int64 -> IO (SM.MVector RealWorld Int64)
 cTimsortUnboxed xs = do
   ys <- S.thaw xs
-  SM.unsafeWith ys $ \ptr -> cTimsortInt64 ptr (SM.length ys)
+  SM.unsafeWith ys $ \ptr -> cTimsortInt64 ptr (CInt (fromIntegral (SM.length ys)))
   pure ys
 
 
@@ -1919,7 +1920,7 @@ cTimsortUnboxed xs = do
 cSqrtUnboxed :: S.Vector Int64 -> IO (SM.MVector RealWorld Int64)
 cSqrtUnboxed xs = do
   ys <- S.thaw xs
-  SM.unsafeWith ys $ \ptr -> cSqrtsortInt64 ptr (SM.length ys)
+  SM.unsafeWith ys $ \ptr -> cSqrtsortInt64 ptr (CInt (fromIntegral (SM.length ys)))
   pure ys
 
 
@@ -1927,14 +1928,14 @@ cSqrtUnboxed xs = do
 cGrailUnboxed :: S.Vector Int64 -> IO (SM.MVector RealWorld Int64)
 cGrailUnboxed xs = do
   ys <- S.thaw xs
-  SM.unsafeWith ys $ \ptr -> cGrailsortInt64 ptr (SM.length ys)
+  SM.unsafeWith ys $ \ptr -> cGrailsortInt64 ptr (CInt (fromIntegral (SM.length ys)))
   pure ys
 
 {-# NOINLINE cBitonicUnboxed #-}
 cBitonicUnboxed :: S.Vector Int64 -> IO (SM.MVector RealWorld Int64)
 cBitonicUnboxed xs = do
   ys <- S.thaw xs
-  SM.unsafeWith ys $ \ptr -> cBitonicsortInt64 ptr (SM.length ys)
+  SM.unsafeWith ys $ \ptr -> cBitonicsortInt64 ptr (CInt (fromIntegral (SM.length ys)))
   pure ys
 
 
