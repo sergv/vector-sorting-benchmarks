@@ -1,24 +1,20 @@
 packages:
   vector-sorting-benchmarks.cabal
 
--- debug-info: true
-
--- -- Specify options for all packages
+-- Specify options for all packages
 -- program-options
---   ghc-options:
---     -pgmc=clang
---     -pgma=clang
---     -pgml=clang
---     -fllvm
---     -optc=-O3
---     -optc=-march=x86-64
---     -optc=-mcpu=skylake
---     -optlo=-O3
---     -optlo=-march=x86-64
---     -optlo=-mcpu=skylake
---     -- -funfolding-creation-threshold=2500
---     -- -funfolding-use-threshold=1250
+package *
+  ghc-options:
+    -pgmc=clang
+    -pgma=clang
+    -pgml=clang
+    -optl-fuse-ld=lld
 
-
-
+    -fllvm
+    -optc=-O3
+    -optc=-march=x86-64
+    -optc=-mcpu=skylake
+    -optlo=-O3
+    -optlo=-march=x86-64
+    -optlo=-mcpu=skylake
 
