@@ -49,6 +49,7 @@ import Control.Monad.Primitive
 import Control.Monad.ST
 import Data.Bits
 import Data.Char
+import Data.Foldable
 import Data.Int
 import Data.Kind
 import Data.List qualified as L
@@ -74,18 +75,6 @@ import Test.Tasty.Bench
 import Test.Tasty.QuickCheck qualified as QC
 
 import ForeignSorting
-
-class MonadStat (m :: Type -> Type) where
-  recordComparison :: m ()
-  recordSwap       :: m ()
-
-data Stat = Stat
-  { sSwaps :: !Int
-  , sCmps  :: !Int
-  }
-
-newtype StatM a = StatM { runStatM :: ReaderT (IORef Stat) IO a }
-  deriving (Functor, Applicative, Monad, PrimMonad, MonadIO)
 
 -- With index comparisons instead of booleans
 -- WARNING: sometimes segfaults with QuickCheck
@@ -1589,7 +1578,6 @@ qsortTwoWaysBitonicCutoffHeapsortMyOwn vector =
             !pi1  = len `unsafeShiftR` 1
             !last = len - 1
             !pi2  = last
-        recordRead 3
         pv0 <- GM.unsafeRead v pi0
         pv1 <- GM.unsafeRead v pi1
         pv2 <- GM.unsafeRead v pi2
@@ -1664,7 +1652,6 @@ qsortTwoWaysBitonicCutoffHeap2OptPart !vector = do
             !pi0  = 0
             !pi1  = len `unsafeShiftR` 1
             !pi2  = len - 1
-        recordRead 3
         pv0 <- GM.unsafeRead v pi0
         pv1 <- GM.unsafeRead v pi1
         pv2 <- GM.unsafeRead v pi2
@@ -2047,15 +2034,14 @@ insertionUnboxedPair xs = do
 
 
 
-xsInteresting :: U.Vector Int
+xsInteresting :: U.Vector Int64
 xsInteresting = U.concat $ replicate 16 $ U.fromList [4, 9, 7, 0, 0, 1, 2, 2, 8, 7, 4, 5, 5, 1, 9, 9]
 
 newtype SortFunc = SortFunc { unSortFunc :: forall s. UM.MVector s Int -> ST s () }
-newtype SortFuncStat = SortFuncStat { unSortFuncStat :: UM.MVector RealWorld Int64 -> StatM () }
 
 main :: IO ()
 main = do
-  let generate n g = U.fromList <$> replicateM n (uniformRM (1 :: Int, 128) g)
+  let generate n g = U.fromList <$> replicateM n (uniformRM (1 :: Int64, 128) g)
 
   str <- T.readFile "./candidates.txt"
 
@@ -2089,7 +2075,7 @@ main = do
      --   , bench "binlog2" $ nf (map binlog2) [0..256]
      --   ]
      -- ] ++
-     [ bgroup ("Int64 " ++ name ++ " " ++ show (U.length (head xs)) ++ " elements")
+     [ bgroup ("Int64 " ++ name ++ " " ++ show (length xs) ++ " elements with " ++ show (sum (map U.length xs) `div` length xs) ++ " items on average each")
        [ bench "Quicksort blog"                                                $ nfAppIO (traverse qsortBlogUnboxedInt64) xs
        , bench "Quicksort blog'"                                               $ nfAppIO (traverse qsortBlogUnboxedInt64') xs
        , bench "Quicksort one way"                                             $ nfAppIO (traverse qsortOneWayUnboxedInt64) xs
@@ -2117,11 +2103,11 @@ main = do
        ]
      | (name, xs) <-
          [ ("candidates", candidates)
-         -- , ("small16", xsSmall16)
-         -- , ("medium100", xsMid100)
-         -- , ("medium", xsMid)
-         -- , ("large", xsLarge)
-         -- , ("interesting", [xsInteresting])
+         , ("small", xsSmall16)
+         , ("medium", xsMid100)
+         , ("medium", xsMid)
+         , ("large", xsLarge)
+         , ("interesting", [xsInteresting])
          ]
      ] ++
      [ bgroup ("(Int32, Int32) " ++ name ++ " " ++ show (U.length (head xs)) ++ " elements")
@@ -2183,6 +2169,7 @@ main = do
          , ("heapSort", SortFunc heapSort)
          ]
        ]
-     ])
+     ]
+     )
 
 
