@@ -440,7 +440,7 @@ qsortBlog = go
   where
     go v | GM.length v < 2 = pure ()
     go v                   = do
-      let !pi = GM.length v `div` 2
+      let !pi = GM.length v `unsafeShiftR` 1
       pi' <- partitionBlog pi v
       go (GM.unsafeSlice 0 pi' v)
       go (GM.unsafeSlice (pi' + 1) (GM.length v - (pi' + 1)) v)
@@ -481,7 +481,7 @@ qsortBlog' = go
       | otherwise = do
         let pi0, pi1, pi2 :: Int
             !pi0 = 0
-            !pi1 = len `div` 2
+            !pi1 = len `unsafeShiftR` 1
             !pi2 = len - 1
         pv0 <- GM.unsafeRead v pi0
         pv1 <- GM.unsafeRead v pi1
@@ -540,7 +540,7 @@ qsortOneWay = go
       | otherwise = do
         let pi0, pi1, pi2 :: Int
             !pi0 = 0
-            !pi1 = len `div` 2
+            !pi1 = len `unsafeShiftR` 1
             !pi2 = len - 1
         pv0      <- GM.unsafeRead v pi0
         pv1      <- GM.unsafeRead v pi1
@@ -1356,7 +1356,7 @@ qsortTwoWays = go
       | otherwise = do
         let pi0, pi1, pi2 :: Int
             !pi0  = 0
-            !pi1  = len `div` 2
+            !pi1  = len `unsafeShiftR` 1
             !last = len - 1
             !pi2  = last
         pv0      <- GM.unsafeRead v pi0
@@ -1429,7 +1429,7 @@ qsortTwoWaysBitonic = go
       | otherwise = do
         let pi0, pi1, pi2 :: Int
             !pi0  = 0
-            !pi1  = len `div` 2
+            !pi1  = len `unsafeShiftR` 1
             !last = len - 1
             !pi2  = last
         pv0      <- GM.unsafeRead v pi0
@@ -1510,7 +1510,7 @@ qsortTwoWaysBitonicCutoffHeap vector = do
       | otherwise = do
         let pi0, pi1, pi2 :: Int
             !pi0  = 0
-            !pi1  = len `div` 2
+            !pi1  = len `unsafeShiftR` 1
             !last = len - 1
             !pi2  = last
         pv0      <- GM.unsafeRead v pi0
@@ -1586,9 +1586,10 @@ qsortTwoWaysBitonicCutoffHeapsortMyOwn vector =
       | otherwise = do
         let pi0, pi1, pi2 :: Int
             !pi0  = 0
-            !pi1  = len `div` 2
+            !pi1  = len `unsafeShiftR` 1
             !last = len - 1
             !pi2  = last
+        recordRead 3
         pv0 <- GM.unsafeRead v pi0
         pv1 <- GM.unsafeRead v pi1
         pv2 <- GM.unsafeRead v pi2
@@ -1661,8 +1662,9 @@ qsortTwoWaysBitonicCutoffHeap2OptPart !vector = do
       | otherwise = do
         let pi0, pi1, pi2 :: Int
             !pi0  = 0
-            !pi1  = len `div` 2
+            !pi1  = len `unsafeShiftR` 1
             !pi2  = len - 1
+        recordRead 3
         pv0 <- GM.unsafeRead v pi0
         pv1 <- GM.unsafeRead v pi1
         pv2 <- GM.unsafeRead v pi2
@@ -1756,7 +1758,7 @@ shiftDown v = go
 {-# INLINE heapify #-}
 heapify :: (PrimMonad m, Ord a, GM.MVector v a) => v (PrimState m) a -> m ()
 heapify v = do
-  go (GM.length v `div` 2)
+  go (GM.length v `unsafeShiftR` 1)
   where
     go 0 = shiftDown v 0
     go n = shiftDown v n *> go (n - 1)
