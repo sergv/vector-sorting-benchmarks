@@ -1,0 +1,232 @@
+#+TITLE:       Readme
+#+DATE:        14 November 2022
+#+EMAIL:       serg.foo@gmail.com
+#+DESCRIPTION:
+#+KEYWORDS:
+#+STARTUP:     content
+#+STARTUP:     inlineimages
+
+# Disable treating underscores as subscripts
+#+OPTIONS: ^:nil
+
+* An attempt to get Haskell sort as fast as C++
+
+The benchmark ~candidates~ takes a list of 40000 strings and essentially sorts their characters.
+
+The benchmarks ~small~, ~medium~ and ~large~ generate 1000 integer
+vectors of different length. Their contents is numbers from 1 to 128
+to simulate characters.
+
+#+BEGIN_EXAMPLE
+sergey@home:~/projects/haskell/benchmarks/vector-sorting-benchmarks$ nix develop -c cabal run vector-sorting-benchmarks --builddir /tmp/dist
+warning: Git tree '/home/sergey/projects/haskell/benchmarks/vector-sorting-benchmarks' is dirty
+Build profile: -w ghc-9.4.2 -O1
+In order, the following will be built (use -v for more details):
+ - vector-sorting-benchmarks-0.1 (exe:vector-sorting-benchmarks) (file bench/VectorSorting.hs changed)
+Preprocessing executable 'vector-sorting-benchmarks' for vector-sorting-benchmarks-0.1..
+Building executable 'vector-sorting-benchmarks' for vector-sorting-benchmarks-0.1..
+[1 of 1] Compiling VectorSorting [Source file changed]
+[2 of 2] Linking /tmp/dist/build/x86_64-linux/ghc-9.4.2/vector-sorting-benchmarks-0.1/x/vector-sorting-benchmarks/build/vector-sorting-benchmarks/vector-sorting-benchmarks [Objects changed]
+clang-13: warning: argument unused during compilation: '-mcpu=skylake' [-Wunused-command-line-argument]
+length candidates = 39867
+All
+  Int64 candidates 39867 elements with 89 items on average each
+    Quicksort blog:                                                OK (0.36s)
+      95.3 ms ± 8.0 ms
+    Quicksort blog':                                               OK (0.27s)
+      84.9 ms ± 8.3 ms
+    Quicksort one way:                                             OK (0.27s)
+      80.9 ms ± 6.5 ms
+    Quicksort two ways:                                            OK (0.28s)
+      85.7 ms ± 8.3 ms
+    Quicksort two ways bitonic:                                    OK (0.29s)
+      88.4 ms ± 3.9 ms
+    Quicksort two ways bitonic with cutoff:                        OK (0.26s)
+      87.0 ms ± 5.7 ms
+    Quicksort two ways bitonic with cutoff, my heapsort:           OK (0.27s)
+      89.6 ms ± 5.4 ms
+    Quicksort two ways bitonic with cutoff, my heapsort, opt part: OK (0.30s)
+      93.3 ms ± 4.8 ms
+    My heap sort:                                                  OK (0.35s)
+      109  ms ± 5.8 ms
+    Vector Algorithms heap:                                        OK (0.37s)
+      115  ms ± 4.1 ms
+    C++:                                                           OK (0.50s)
+      66.0 ms ± 2.1 ms
+    C quick_sort:                                                  OK (0.26s)
+      77.1 ms ± 5.0 ms
+  Int64 small 1000 elements with 16 items on average each
+    Quicksort blog:                                                OK (0.24s)
+      269  μs ±  23 μs
+    Quicksort blog':                                               OK (0.47s)
+      166  μs ± 7.2 μs
+    Quicksort one way:                                             OK (0.28s)
+      167  μs ±  13 μs
+    Quicksort two ways:                                            OK (0.30s)
+      166  μs ±  12 μs
+    Quicksort two ways bitonic:                                    OK (0.31s)
+      180  μs ±  15 μs
+    Quicksort two ways bitonic with cutoff:                        OK (0.50s)
+      182  μs ± 6.4 μs
+    Quicksort two ways bitonic with cutoff, my heapsort:           OK (0.27s)
+      170  μs ±  11 μs
+    Quicksort two ways bitonic with cutoff, my heapsort, opt part: OK (0.30s)
+      170  μs ±  12 μs
+    My heap sort:                                                  OK (0.39s)
+      257  μs ±  11 μs
+    Vector Algorithms heap:                                        OK (0.26s)
+      306  μs ±  28 μs
+    C++:                                                           OK (0.46s)
+      167  μs ± 6.8 μs
+    C quick_sort:                                                  OK (0.38s)
+      251  μs ±  11 μs
+  Int64 medium 1000 elements with 100 items on average each
+    Quicksort blog:                                                OK (0.37s)
+      2.34 ms ± 214 μs
+    Quicksort blog':                                               OK (0.33s)
+      2.12 ms ± 181 μs
+    Quicksort one way:                                             OK (0.21s)
+      2.14 ms ± 168 μs
+    Quicksort two ways:                                            OK (0.36s)
+      2.16 ms ± 104 μs
+    Quicksort two ways bitonic:                                    OK (0.22s)
+      2.26 ms ± 199 μs
+    Quicksort two ways bitonic with cutoff:                        OK (0.22s)
+      2.30 ms ± 181 μs
+    Quicksort two ways bitonic with cutoff, my heapsort:           OK (0.38s)
+      2.29 ms ± 163 μs
+    Quicksort two ways bitonic with cutoff, my heapsort, opt part: OK (0.38s)
+      2.40 ms ± 234 μs
+    My heap sort:                                                  OK (0.24s)
+      2.83 ms ± 243 μs
+    Vector Algorithms heap:                                        OK (0.49s)
+      3.17 ms ± 156 μs
+    C++:                                                           OK (0.33s)
+      1.96 ms ± 129 μs
+    C quick_sort:                                                  OK (0.68s)
+      2.28 ms ± 117 μs
+  Int64 medium 1000 elements with 256 items on average each
+    Quicksort blog:                                                OK (0.27s)
+      6.73 ms ± 455 μs
+    Quicksort blog':                                               OK (0.52s)
+      6.91 ms ± 540 μs
+    Quicksort one way:                                             OK (0.27s)
+      6.70 ms ± 441 μs
+    Quicksort two ways:                                            OK (0.29s)
+      7.12 ms ± 562 μs
+    Quicksort two ways bitonic:                                    OK (0.28s)
+      6.99 ms ± 484 μs
+    Quicksort two ways bitonic with cutoff:                        OK (0.27s)
+      6.98 ms ± 611 μs
+    Quicksort two ways bitonic with cutoff, my heapsort:           OK (0.28s)
+      6.95 ms ± 396 μs
+    Quicksort two ways bitonic with cutoff, my heapsort, opt part: OK (0.30s)
+      7.56 ms ± 610 μs
+    My heap sort:                                                  OK (0.17s)
+      9.22 ms ± 803 μs
+    Vector Algorithms heap:                                        OK (0.21s)
+      10.2 ms ± 705 μs
+    C++:                                                           OK (0.44s)
+      5.93 ms ± 428 μs
+    C quick_sort:                                                  OK (0.28s)
+      6.91 ms ± 379 μs
+  Int64 large 1000 elements with 20000 items on average each
+    Quicksort blog:                                                OK (3.45s)
+      1.154 s ±  50 ms
+    Quicksort blog':                                               OK (3.55s)
+      1.167 s ±  12 ms
+    Quicksort one way:                                             OK (3.91s)
+      1.291 s ±  22 ms
+    Quicksort two ways:                                            OK (4.15s)
+      1.373 s ±  45 ms
+    Quicksort two ways bitonic:                                    OK (3.64s)
+      1.197 s ±  13 ms
+    Quicksort two ways bitonic with cutoff:                        OK (2.02s)
+      662  ms ±  17 ms
+    Quicksort two ways bitonic with cutoff, my heapsort:           OK (1.67s)
+      545  ms ± 7.5 ms
+    Quicksort two ways bitonic with cutoff, my heapsort, opt part: OK (2.00s)
+      661  ms ±  15 ms
+    My heap sort:                                                  OK (3.64s)
+      1.203 s ± 6.3 ms
+    Vector Algorithms heap:                                        OK (3.91s)
+      1.294 s ±  47 ms
+    C++:                                                           OK (1.60s)
+      523  ms ±  29 ms
+    C quick_sort:                                                  OK (1.53s)
+      494  ms ±  13 ms
+  Int64 interesting 1 elements with 256 items on average each
+    Quicksort blog:                                                OK (0.45s)
+      3.40 μs ± 190 ns
+    Quicksort blog':                                               OK (0.40s)
+      3.21 μs ± 228 ns
+    Quicksort one way:                                             OK (0.44s)
+      3.41 μs ± 225 ns
+    Quicksort two ways:                                            OK (0.66s)
+      3.26 μs ± 213 ns
+    Quicksort two ways bitonic:                                    OK (0.62s)
+      2.85 μs ± 106 ns
+    Quicksort two ways bitonic with cutoff:                        OK (0.93s)
+      2.54 μs ±  93 ns
+    Quicksort two ways bitonic with cutoff, my heapsort:           OK (0.45s)
+      1.90 μs ± 145 ns
+    Quicksort two ways bitonic with cutoff, my heapsort, opt part: OK (0.41s)
+      1.44 μs ±  87 ns
+    My heap sort:                                                  OK (0.37s)
+      2.34 μs ± 188 ns
+    Vector Algorithms heap:                                        OK (0.32s)
+      2.53 μs ± 224 ns
+    C++:                                                           OK (0.78s)
+      1.01 μs ±  22 ns
+    C quick_sort:                                                  OK (0.53s)
+      1.12 μs ±  52 ns
+  (Int32, Int32) candidates pair 73 elements
+    Quicksort blog:                                                OK (1.20s)
+      143  ms ± 3.1 ms
+    Quicksort blog':                                               OK (0.47s)
+      141  ms ± 4.3 ms
+    Quicksort one way:                                             OK (0.45s)
+      134  ms ± 3.8 ms
+    Quicksort two ways:                                            OK (1.04s)
+      139  ms ± 1.6 ms
+    Quicksort two ways bitonic:                                    OK (0.45s)
+      132  ms ± 6.7 ms
+    Quicksort two ways bitonic with cutoff:                        OK (0.44s)
+      132  ms ± 4.8 ms
+    Quicksort two ways bitonic with cutoff, my heapsort:           OK (0.42s)
+      133  ms ± 3.0 ms
+    Quicksort two ways bitonic with cutoff, my heapsort, opt part: OK (0.51s)
+      154  ms ± 3.9 ms
+    My heap sort:                                                  OK (0.50s)
+      152  ms ± 5.9 ms
+    Vector Algorithms heap:                                        OK (0.61s)
+      186  ms ±  11 ms
+  Correctness
+    qsortOneWay sorts:                                             OK (1.53s)
+      +++ OK, passed 100000 tests.
+    qsortTwoWays sorts:                                            OK (1.55s)
+      +++ OK, passed 100000 tests.
+    qsortTwoWaysBitonic sorts:                                     OK (2.26s)
+      +++ OK, passed 100000 tests.
+    qsortTwoWaysBitonicCutoffHeap sorts:                           OK (2.23s)
+      +++ OK, passed 100000 tests.
+    qsortTwoWaysBitonicCutoffHeapsortMyOwn sorts:                  OK (2.22s)
+      +++ OK, passed 100000 tests.
+    qsortTwoWaysBitonicCutoffHeap2OptPart sorts:                   OK (2.33s)
+      +++ OK, passed 100000 tests.
+    heapSort sorts:                                                OK (0.60s)
+      +++ OK, passed 100000 tests.
+
+All 89 tests passed (76.51s)
+#+END_EXAMPLE
+
+** Boring details
+Actually the ~candidates~ benchmark takes each character, notes its
+position and makes a wide integer out of character code and the
+position so that character will be compared first - it unboxes the two
+smaller integers into a bigger one
+
+There’s corresponding ~(Int32, Int32) candidates pair~ benchmark that
+does the same thing but with a proper pair within unboxed vector. Turs
+out it’s significantly slower. There’s no corresponding C++ benchmark
+though.
